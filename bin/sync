@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# sync all
+
+bindir=`dirname $0`
+root=`dirname $bindir`
+
+pushd $root
+tar zvcf - ./ex*/s1190235-*.c | ssh aizu-std1 /usr/local/gnu/bin/tar zvxf - -C alg1/
+popd
+

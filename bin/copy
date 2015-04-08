@@ -1,0 +1,21 @@
+#!/bin/sh
+
+destdir=$1
+
+if [ "$destdir" = "" ]; then
+  echo should be passed dest path
+  exit 1
+fi
+
+
+if [ ! -d "$destdir" ]; then
+  echo dest path should be directory
+  exit 2
+fi
+
+bindir=`dirname $0`
+root=`dirname $bindir`
+
+echo copy: CMakeLists.txt
+erb p=`basename $destdir` $root/CMakeLists.txt.erb > $destdir/CMakeLists.txt
+

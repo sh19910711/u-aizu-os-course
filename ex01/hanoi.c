@@ -1,19 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define NDISKS 5
-
-int naA[NDISKS]; //À¿A
-int naB[NDISKS]; //À¿B
-int naC[NDISKS]; //À¿C
-int nMoves = 0;  //¡Ì∞‹∆∞≤ÛøÙ
-int nDisks = NDISKS; //±ﬂ»◊øÙ
+int *naA; //√ã√ÄA
+int *naB; //√ã√ÄB
+int *naC; //√ã√ÄC
+int nMoves = 0;  //√Å√≠¬∞√ú√Ü¬∞¬≤√≥¬ø√¥
+int nDisks; //¬±√ü√à√ó¬ø√¥
 
 void Initialize();
 void Solve(int*, int*, int*, int);
 void Display(int);
+// added functions
+int InputDisksFromCommandLine(int, char *[]);
+void AllocateMemory(int);
+void FreeMemory();
 
 int main(int argc, char *argv[], char *envv[]) {
+
+  nDisks = InputDisksFromCommandLine(argc, argv);
+  AllocateMemory(nDisks);
 
   Initialize();
   Display(getpid());
@@ -21,6 +26,31 @@ int main(int argc, char *argv[], char *envv[]) {
   Solve(naA, naB, naC, nDisks);
   Display(getpid());
 
+  FreeMemory();
+}
+
+void AllocateMemory(int num) {
+  naA = malloc(num * sizeof(int));
+  naB = malloc(num * sizeof(int));
+  naC = malloc(num * sizeof(int));
+}
+
+void FreeMemory() {
+  free(naA);
+  free(naB);
+  free(naC);
+}
+
+int InputDisksFromCommandLine(int argc, char *argv[]) {
+  int disks;
+  if ( argc != 2 ) {
+    printf("error: invalid args");
+    printf("usage: command {nDisks}");
+    exit(1);
+  }
+  sscanf(argv[1], "%d", &disks);
+  printf("nDisks = %d\n", disks);
+  return disks;
 }
 
 void Initialize() {

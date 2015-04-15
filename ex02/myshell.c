@@ -9,6 +9,17 @@
 #include  <stdlib.h>
 #include  <unistd.h>
 
+/* extra headers */
+#include <dirent.h>
+#include <fcntl.h>
+#include <sys/syscall.h>
+
+struct linux_dirent {
+    long           d_ino;
+    off_t          d_off;
+    unsigned short d_reclen;
+    char           d_name[];
+};
 
 void  parse(char *line, char **argv)
 {
@@ -20,7 +31,100 @@ void  parse(char *line, char **argv)
         *line != '\t' && *line != '\n') 
       line++;             /* skip the argument until ...    */
   }
-  *argv = '\0';                 /* mark the end of argument list  */
+  *argv = NULL;                 /* mark the end of argument list  */
+}
+
+int count_args(char **argv) {
+  int i = 0;
+  while ( argv[i][0] != '\0' ) {
+    i ++;
+  }
+  return i;
+}
+
+/* ls: list files and directories */
+/* cat: show file */
+int call_shell_function(char **argv) {
+  int argc;
+  int fd;
+  char buf[1024];
+  int num;
+  int i;
+  struct linux_dirent *dirent;
+
+  argc = count_args(argv);
+
+  /* (1) list the files in the current directory */
+  if ( ! strcmp("ls", argv[0]) ) {
+    /* Open directory */
+    fd = open(argc > 1 ? argv[1] : ".", O_RDONLY | O_DIRECTORY);
+    if ( fd == -1 ) {
+      printf("*** error: file open\n");
+      return 1;
+    }
+
+    for (;;) {
+      num = syscall(SYS_getdents, fd, buf, sizeof(buf));
+      if ( num == -1 ) {
+        printf("*** error: read dir\n");
+        return 1;
+      }
+      if ( num == 0 ) {
+        break;
+      }
+
+      /* Output directory names */
+      for ( i = 0; i < num; ) {
+        dirent = (struct linux_dirent *)(buf + i);
+        /* Ignore dot dirs */
+        if ( strcmp(".", dirent->d_name) && strcmp("..", dirent->d_name) ) {
+          printf("%s", dirent->d_name);
+          if ( i + dirent->d_reclen < num ) {
+            printf(" ");
+          } else {
+            printf("\n");
+          }
+        }
+        i += dirent->d_reclen;
+      }
+    }
+
+    return 0;
+  }
+  /* (3) show the contents of this file, as follows */
+  else if ( ! strcmp("cat", argv[0]) ) {
+    if ( argc != 2 ) {
+      printf("usage: cat <filename>\n");
+      return 1;
+    }
+
+    fd = open(argv[1], O_RDONLY);
+    if ( fd == -1 ) {
+      printf("*** error: file open");
+      return 1;
+    }
+
+    for (;;) {
+      num = syscall(SYS_read, fd, buf, sizeof(buf));
+      if ( num == -1 ) {
+        printf("*** error: read file");
+      }
+      if ( num == 0 ) {
+        break;
+      }
+      syscall(SYS_write, 1, buf, num);
+    }
+
+    return 0;
+  }
+  printf("*** ERROR: command not found\n");
+  return 1;
+}
+
+int is_shell_function(char *cmd) {
+  if ( ! strcmp("ls", cmd) ) return 1;
+  if ( ! strcmp("cat", cmd) ) return 1;
+  return 0;
 }
 
 /* ----------------------------------------------------------------- */
@@ -35,6 +139,7 @@ void  execute(char **argv)
 {
   pid_t  pid;
   int    status;
+  char **p;
 
   if ((pid = fork()) < 0) {     /* fork a child process           */
     printf("*** ERROR: forking child process failed\n");
@@ -42,14 +147,21 @@ void  execute(char **argv)
   }
   else if (pid == 0) {          /* for the child process:         */
     /* add your code here, execute command using execvp function */
+    if ( is_shell_function(argv[0]) ) {
+      exit(call_shell_function(argv));
+    } else {
+      /* convert to NULL for execvp() */
+      p = argv;
+      while ( *p[0] != '\0' ) {
+        p ++;
+      }
+      *p = NULL;
 
-
-
-
-
-
-    printf("*** ERROR: exec failed\n");
-    exit(1);
+      /* call program */
+      execvp(argv[0], argv);
+      printf("*** ERROR: exec failed\n");
+      exit(1);
+    }
   } else {                                  /* for the parent:      */
     while (wait(&status) != pid)       /* wait for completion  */
       ;

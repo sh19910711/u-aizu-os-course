@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <signal.h>
 
 int *naA; //ËÀA
 int *naB; //ËÀB
@@ -14,19 +15,27 @@ void Display(int);
 int InputDisksFromCommandLine(int, char *[]);
 void AllocateMemory(int);
 void FreeMemory();
+void SignalHandler(int);
 
 int main(int argc, char *argv[], char *envv[]) {
+
+  signal(SIGUSR1, SignalHandler);
 
   nDisks = InputDisksFromCommandLine(argc, argv);
   AllocateMemory(nDisks);
 
   Initialize();
-  Display(getpid());
 
   Solve(naA, naB, naC, nDisks);
-  Display(getpid());
 
   FreeMemory();
+}
+
+// Call Display()
+void SignalHandler(int code) {
+  Display(getpid());
+  // re-add this handler
+  signal(SIGUSR1, SignalHandler);
 }
 
 void AllocateMemory(int num) {
@@ -67,6 +76,8 @@ void Initialize() {
 void Solve(int *_naA, int *_naB, int *_naC, int n) {
 
   if (n) {
+
+    sleep(1);
 
     Solve(_naA+1, _naC, _naB, n-1);
 

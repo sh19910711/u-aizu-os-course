@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(ex03)
 add_executable(hello hello.c)
+add_executable(hanoi_sigusr hanoi_sigusr.c)
 
 # enable gtest
 find_package(GTest)

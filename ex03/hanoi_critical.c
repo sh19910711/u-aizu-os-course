@@ -7,6 +7,7 @@ int *naB; //ËÀB
 int *naC; //ËÀC
 int nMoves = 0;  //Áí°ÜÆ°²ó¿ô
 int nDisks; //±ßÈ×¿ô
+int flag_display; // to avoid critical path?
 
 void Initialize();
 void Solve(int*, int*, int*, int);
@@ -33,7 +34,8 @@ int main(int argc, char *argv[], char *envv[]) {
 
 // Call Display()
 void SignalHandler(int code) {
-  Display(getpid());
+  // set flag
+  flag_display = 1;
   // re-add this handler
   signal(SIGUSR1, SignalHandler);
 }
@@ -77,14 +79,20 @@ void Solve(int *_naA, int *_naB, int *_naC, int n) {
 
   if (n) {
 
-    sleep(1);
-
     Solve(_naA+1, _naC, _naB, n-1);
 
     *_naB = *_naA;
+    sleep(1); // delay
     *_naA = 0;
 
     ++nMoves;
+
+    if ( flag_display ) {
+      // reset flag
+      flag_display = 0;
+      // display
+      Display(getpid());
+    }
 
     Solve(_naC, _naB+1, _naA, n-1);
   }

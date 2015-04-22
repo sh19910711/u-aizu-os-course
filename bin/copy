@@ -19,3 +19,8 @@ root=`dirname $bindir`
 echo copy: CMakeLists.txt
 erb p=`basename $destdir` $root/CMakeLists.txt.erb > $destdir/CMakeLists.txt
 
+echo hello.c
+cp $root/template/hello.c $destdir/hello.c
+echo hello_test.cpp
+cp $root/template/hello.c $destdir/hello_test.cpp
+

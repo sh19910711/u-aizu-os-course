@@ -55,6 +55,9 @@ void serial(int num_tasks)
 
 
 	/* Add your codes here. Hint: execute tasks serially */
+  for ( i = 0; i < num_tasks; ++ i ) {
+    task(i);
+  }
 
 	gettimeofday(&myEnd,NULL);
   
@@ -76,14 +79,14 @@ void parallel(int num_tasks)
 
 	gettimeofday(&mySt,NULL);
 
-    /* Add your codes here. Hint: execute tasks in parallel by using "pthread_create" and "pthread_join" functions.*/
-
-
-
-
-
-
-
+  /* Add your codes here. Hint: execute tasks in parallel by using "pthread_create" and "pthread_join" functions.*/
+  for ( t = 0; t < num_threads; ++ t ) {
+    printf("Creating thread %ld\n", t);
+    pthread_create(&thread[t], NULL, thread_task, (void*)t);
+  }
+  for ( t = 0; t < num_threads; ++ t ) {
+    pthread_join(thread[t], (void**)0);
+  }
 
 	gettimeofday(&myEnd,NULL);
 

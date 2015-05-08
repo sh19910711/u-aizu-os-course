@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
 project(ex04)
 add_executable(hello hello.c)
+add_executable(pthread pthread.c)
+target_link_libraries(pthread
+  -lm
+  -pthread
+  )
 
 # enable gtest
 find_package(GTest)

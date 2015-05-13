@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(ex05)
 add_executable(hello hello.c)
+add_executable(ProcPipe1 ProcPipe1.c)
 
 # enable gtest
 find_package(GTest)

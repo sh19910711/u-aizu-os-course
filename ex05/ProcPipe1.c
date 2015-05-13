@@ -24,10 +24,16 @@ int main(int argc, char *argv[], char *env[]){
 void ChildProcess(char **argv, char **env, int *naPipeDesc) {
 
   //bannerコマンドのパス指定
-  char *sBannerComm = "/Network/Servers/profsv0831/vol/vol1/home21/nisidate/bin/banner";
+  char *sBannerComm = "~nisidate/bin/banner";
+  char command[1024];
+
+  sprintf(command, "%s %s", sBannerComm, argv[2]);
 
   //パイプ関連の処理群
-
+  close(naPipeDesc[0]);
+  dup2(naPipeDesc[1], fileno(stdout));
+  system(command);
+  close(naPipeDesc[1]);
 
   //banner実行
   //systemの方が楽かもしれません
@@ -45,15 +51,20 @@ void ParentProcess(char **argv, char **env, int *naPipeDesc) {
 
   //sedコマンドのパス指定
   char *sSedComm = "/usr/local/gnu/bin/sed";
+  char command[1024];
 
   //パイプ関連の処理群
-
+  close(naPipeDesc[1]);
+  dup2(naPipeDesc[0], fileno(stdin));
 
   //bannerの結果を受け取ってsedなので, 子プロセスが実行し終えるのを待つ
   wait(0);
   
 
   //sed s/#/%c/g 実行 
+  sprintf(command, "%s s/#/%c/g", sSedComm, argv[1][0]);
+  system(command);
+  close(naPipeDesc[0]);
 
 
 }

@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(ex06)
 add_executable(hello hello.c)
+add_executable(scheduling ./scheduling.c)
 
 # enable gtest
 find_package(GTest)

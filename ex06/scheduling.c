@@ -73,6 +73,7 @@ void fcfs (struct process *proc) {
     start = time;
 
     //add your code here
+    time += tmp->burst; // update time
 
 
 
@@ -105,6 +106,7 @@ void listprocs (struct process *proc) {
 void rr (struct process *proc, int quantum) {
 
   struct process *current;
+  struct process *tmp; // added variable
 
   printf("BEGIN:\tRound-Robin scheduling simulation (Quantum: %d)\n", quantum);
 
@@ -120,6 +122,7 @@ void rr (struct process *proc, int quantum) {
       if ( current->burst > current->working ) {
 
         //add working time to the current process
+        current->working ++;
 
 
 
@@ -127,7 +130,15 @@ void rr (struct process *proc, int quantum) {
 
 
         //add waiting time to the other processes if not finished yet
-
+        tmp = proc;
+        while ( tmp != NULL ) {
+          if ( tmp != current ) {
+            if ( tmp->burst > tmp->working ) {
+              tmp->waiting ++;
+            }
+          }
+          tmp = tmp->next;
+        }
 
 
 

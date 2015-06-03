@@ -52,20 +52,24 @@ int main(int argc, char *argv[]) {
 void AllocateShareMemory(int nRequestedNumDisks) {
 
   //共有メモリ領域の大きさは (nDisksとnMoves + naAとnaBとnaC)
-  int nShareMemSize = ...;
+  int nShareMemSize = 1 + 1 + nRequestedNumDisks * 3;
 
   //共有メモリ領域要求, 領域のIDが返る
-  nShareMemID = ...;
+  nShareMemID = shmget(IPC_PRIVATE, nShareMemSize, SHM_R | SHM_W);
   printf("Share Memory ID = %d\n", nShareMemID);
 
   //メモリ領域割り振り
-  nDisks = ...;
+  nDisks = shmat(nShareMemID, 0, SHM_R | SHM_W);
   if (nDisks == (void*)-1) {
     printf("shmat failed\n");
     exit(1);
   }
 
   //nMoves, naA, naB, naCにも割り振る
+  nMoves = nDisks + 1;
+  naA = nDisks + 2 + nRequestedNumDisks * 0;
+  naB = nDisks + 2 + nRequestedNumDisks * 1;
+  naC = nDisks + 2 + nRequestedNumDisks * 2;
 
 }
 

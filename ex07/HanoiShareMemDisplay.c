@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
 void AllocateShareMemory(int nShareMemID) {
 
   //メモリ領域割り振り
-  nDisks = ...;
+  nDisks = shmat(nShareMemID, 0, SHM_R | SHM_W);
 
   if (nDisks == (void*)-1) {
     printf("Share memory cannot be referred\n");
@@ -39,8 +39,10 @@ void AllocateShareMemory(int nShareMemID) {
   }
 
   //nMoves, naA, naB, naCにも割り振る
-
-
+  nMoves = nDisks + 1;
+  naA = nDisks + 2 + (*nDisks) * 0;
+  naB = nDisks + 2 + (*nDisks) * 1;
+  naC = nDisks + 2 + (*nDisks) * 2;
 }
 
 void Display(void){

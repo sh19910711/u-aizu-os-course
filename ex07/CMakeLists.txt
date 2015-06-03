@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 project(ex07)
 add_executable(hello hello.c)
+add_executable(HanoiShareMemDisplay ./HanoiShareMemDisplay.c)
+add_executable(HanoiShareMemSolve ./HanoiShareMemSolve.c)
 
 # enable gtest
 find_package(GTest)

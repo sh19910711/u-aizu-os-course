@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
   nShareMemID = atoi(argv[1]);
   nSemaphID = atoi(argv[2]);
 
-  //¶¦Í­¥á¥â¥ê³ÎÊİ¤ÈÎÎ°è³ä¤ê¿¶¤ê
+  //å…±æœ‰ãƒ¡ãƒ¢ãƒªç¢ºä¿ã¨é ˜åŸŸå‰²ã‚ŠæŒ¯ã‚Š
   AllocateShareMemory(nShareMemID);
 
 

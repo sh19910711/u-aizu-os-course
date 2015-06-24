@@ -61,7 +61,7 @@ void CreateSemaphore() {
     exit(-1); 
   }
 
-  //Æ±»ş¥¢¥¯¥»¥¹²ÄÇ½¤Ê¥×¥í¥»¥¹¿ô¤ò1¤ËÀßÄê¤·¤¿¥»¥Ş¥Õ¥©¤òºî¤ë
+  //åŒæ™‚ã‚¢ã‚¯ã‚»ã‚¹å¯èƒ½ãªãƒ—ãƒ­ã‚»ã‚¹æ•°ã‚’1ã«è¨­å®šã—ãŸã‚»ãƒãƒ•ã‚©ã‚’ä½œã‚‹
   union semun semctlArg;
   semctlArg.val = 1;
   if (semctl(nSemaphID, 0, SETVAL, semctlArg) == -1) {
@@ -125,7 +125,7 @@ void Solve(int *_naA, int *_naB, int *_naC, int n) {
 }
 
 void SignalHandler(int h){
-  //¸åÊÒÉÕ¤±
+  //å¾Œç‰‡ä»˜ã‘
   shmctl(nShareMemID, IPC_RMID, 0);
   DiscardSemaphore();
   exit(1);

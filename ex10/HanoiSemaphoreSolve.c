@@ -41,6 +41,8 @@ int main(int argc, char *argv[]) {
   *nDisks = nRequestedNumDisks;
   Initialize();
 
+  printf("### Command to display result:\n");
+  printf("./build/HanoiSemaphoreDisplay %d %d\n\n", nShareMemID, nSemaphID);
   Solve(naA, naB, naC, *nDisks);
 
   printf("Number of Moves: %d\n", *nMoves);
@@ -82,15 +84,51 @@ void DiscardSemaphore() {
 }
 
 void ReserveCriticalRegion(int nSemaphID) {
+  struct sembuf semBuf;
+  semBuf.sem_num = 0;
+  semBuf.sem_flg = 0;
+  semBuf.sem_op = -1;
 
+  if (semop(nSemaphID, &semBuf, 1) == -1) {
+    perror("semop(reserve) failure");
+    exit(-1);
+  }
 }
 
 void ReleaseCriticalRegion(int nSemaphID) {
+  struct sembuf semBuf;
+  semBuf.sem_num = 0;
+  semBuf.sem_flg = 0;
+  semBuf.sem_op = 1;
 
+  if (semop(nSemaphID, &semBuf, 1) == -1) {
+    perror("semop(release) failure");
+    exit(-1);
+  }
 }
 
 void AllocateShareMemory(int nRequestedNumDisks) {
+  // copied from ex07
 
+  //共有メモリ領域の大きさは (nDisksとnMoves + naAとnaBとnaC)
+  int nShareMemSize = 1 + 1 + nRequestedNumDisks * 3;
+
+  //共有メモリ領域要求, 領域のIDが返る
+  nShareMemID = shmget(IPC_PRIVATE, nShareMemSize, SHM_R | SHM_W);
+  printf("Share Memory ID = %d\n", nShareMemID);
+
+  //メモリ領域割り振り
+  nDisks = shmat(nShareMemID, 0, SHM_R | SHM_W);
+  if (nDisks == (void*)-1) {
+    printf("shmat failed\n");
+    exit(1);
+  }
+
+  //nMoves, naA, naB, naCにも割り振る
+  nMoves = nDisks + 1;
+  naA = nDisks + 2 + nRequestedNumDisks * 0;
+  naB = nDisks + 2 + nRequestedNumDisks * 1;
+  naC = nDisks + 2 + nRequestedNumDisks * 2;
 }
 
 void Initialize() {
@@ -110,12 +148,14 @@ void Solve(int *_naA, int *_naB, int *_naC, int n) {
 
     Solve(_naA+1, _naC, _naB, n-1);
 
-    
+  
+    ReserveCriticalRegion(nSemaphID);
     *_naB = *_naA;
     //    usleep(100000);
     *_naA = 0;
 
     (*nMoves)++;
+    ReleaseCriticalRegion(nSemaphID);
 
 
     Solve(_naC, _naB+1, _naA, n-1);

@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 project(ex10)
 add_executable(hello hello.c)
+add_executable(HanoiSemaphoreSolve ./HanoiSemaphoreSolve.c)
+add_executable(HanoiSemaphoreDisplay ./HanoiSemaphoreDisplay.c)
 
 # enable gtest
 find_package(GTest)

@@ -15,11 +15,11 @@ void SignalHandler(int);
 
 void SendTowerState();
 
-int *naA; //ËÀA
-int *naB; //ËÀB
-int *naC; //ËÀC
-int nMoves = 0;  //Áí°ÜÆ°²ó¿ô
-int nDisks = 20; //±ßÈ×¿ô
+int *naA; //æ£’A
+int *naB; //æ£’B
+int *naC; //æ£’C
+int nMoves = 0;  //ç·ç§»å‹•å›æ•°
+int nDisks = 20; //å††ç›¤æ•°
 
 int nSignalALRMReceived = 0;
 int nAlarmInterval = 5;
@@ -117,15 +117,15 @@ void SendTowerState() {
 
   int nMesgLength = 0;
 
-  //Á÷¿®¥á¥Ã¥»¡¼¥¸¥Ñ¥±¥Ã¥È¤ÎºîÀ®
+  //é€ä¿¡ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ‘ã‚±ãƒƒãƒˆã®ä½œæˆ
   MyMessagePacket mesgPacket;
   mesgPacket.nMessageType = 1;
 
 
-  //Á÷¿®¥á¥Ã¥»¡¼¥¸¥Ñ¥±¥Ã¥È¤Î¥µ¥¤¥º¤â»ØÄê
+  //é€ä¿¡ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ‘ã‚±ãƒƒãƒˆã®ã‚µã‚¤ã‚ºã‚‚æŒ‡å®š
 
 
-  //¥á¥Ã¥»¡¼¥¸¥Ñ¥±¥Ã¥È¤òÁ÷¿®¤¹¤ë
+  //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ‘ã‚±ãƒƒãƒˆã‚’é€ä¿¡ã™ã‚‹
   if (msgsnd(nMesgQueueID, (void*)(&mesgPacket), nMesgLength, IPC_NOWAIT) < 0) { 
     perror("ERR:msgsnd"); 
   }

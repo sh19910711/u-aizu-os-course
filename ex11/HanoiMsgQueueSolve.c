@@ -88,6 +88,8 @@ void Solve(int *_naA, int *_naB, int *_naC, int n) {
       nSignalALRMReceived = 0; 
     } 
 
+    sleep(1);
+
     Solve(_naC, _naB+1, _naA, n-1);
 
   }
@@ -120,16 +122,21 @@ void SendTowerState() {
   //送信メッセージパケットの作成
   MyMessagePacket mesgPacket;
   mesgPacket.nMessageType = 1;
-
+  mesgPacket.nDisks = nDisks;
+  mesgPacket.nMoves = nMoves;
+  for (i = 0; i < nDisks; ++ i) {
+    mesgPacket.naA[i] = naA[i];
+    mesgPacket.naB[i] = naB[i];
+    mesgPacket.naC[i] = naC[i];
+  }
 
   //送信メッセージパケットのサイズも指定
-
+  nMesgLength = sizeof(mesgPacket) - sizeof(mesgPacket.nMessageType);
 
   //メッセージパケットを送信する
   if (msgsnd(nMesgQueueID, (void*)(&mesgPacket), nMesgLength, IPC_NOWAIT) < 0) { 
     perror("ERR:msgsnd"); 
   }
-
 }
 
 void SignalALRMHandler(int code) {

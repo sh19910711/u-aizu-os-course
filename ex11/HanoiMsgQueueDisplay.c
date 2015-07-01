@@ -42,10 +42,10 @@ int ReceiveTowerState() {
   MyMessagePacket mesgPacket;
 
   //受け取りメッセージサイズを指定
-  int nMesgLength = ...;
+  int nMesgLength = sizeof(mesgPacket) - sizeof(mesgPacket.nMessageType);
 
   //msgrcvでメッセージを受け取り、読み込みに成功したメッセージの長さを受け取る
-  nMesgLength = ...;
+  nMesgLength = msgrcv(nMesgQueueID, &mesgPacket, nMesgLength, 0, MSG_NOERROR);
 
   if (nMesgLength < 0) { 
     perror("ERR;msgrcv"); 
@@ -53,11 +53,22 @@ int ReceiveTowerState() {
   }
 
   //受信メッセージパケットの解釈
+  nDisks = mesgPacket.nDisks;
+  nMoves = mesgPacket.nMoves;
 
   //nDisksの中身を受け取ったら こちら側に塔情報を再現するためメモリ領域を確保する,
   //もしくはDisplay関数をMyMessagePacketを受け取って中身を出力するように書き換える
-
-
+  if (naA) free(naA);
+  if (naB) free(naB);
+  if (naC) free(naC);
+  naA = (int*)malloc(sizeof(int) * nDisks);
+  naB = (int*)malloc(sizeof(int) * nDisks);
+  naC = (int*)malloc(sizeof(int) * nDisks);
+  for (i = 0; i < nDisks; ++ i) {
+    naA[i] = mesgPacket.naA[i];
+    naB[i] = mesgPacket.naB[i];
+    naC[i] = mesgPacket.naC[i];
+  }
 
   return nMesgLength;
 }

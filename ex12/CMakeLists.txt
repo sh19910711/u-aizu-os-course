@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 project(ex12)
 add_executable(hello hello.c)
+add_executable(HanoiFileLockSolve ./HanoiFileLockSolve.c)
+add_executable(HanoiFileLockDisplay ./HanoiFileLockDisplay.c)
 
 # enable gtest
 find_package(GTest)

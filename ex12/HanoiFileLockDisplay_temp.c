@@ -7,11 +7,11 @@
 void Display(void);
 void ReadData(const char*);
 
-int *naA; //ËÀA
-int *naB; //ËÀB
-int *naC; //ËÀC
-unsigned int nMoves = 0;  //Áí°ÜÆ°²ó¿ô
-int nDisks = 0; //±ßÈ×¿ô
+int *naA; //æ£’A
+int *naB; //æ£’B
+int *naC; //æ£’C
+unsigned int nMoves = 0;  //ç·ç§»å‹•å›æ•°
+int nDisks = 0; //å††ç›¤æ•°
 
 int main(int argc,char *argv[]){
 
@@ -28,14 +28,14 @@ int main(int argc,char *argv[]){
 
 void ReadData(const char* sFileName) {
 
-  //¥Õ¥¡¥¤¥ë¥ª¡¼¥×¥ó
+  //ãƒ•ã‚¡ã‚¤ãƒ«ã‚ªãƒ¼ãƒ—ãƒ³
   int nFileDesc = open(sFileName, O_RDONLY);
 
-  //±ßÈ×¿ô¤òÆÉ¤ß¹ş¤à
+  //å††ç›¤æ•°ã‚’èª­ã¿è¾¼ã‚€
 
-  //¥á¥â¥êÎÎ°è³ÎÊİ
+  //ãƒ¡ãƒ¢ãƒªé ˜åŸŸç¢ºä¿
 
-  //±ßÈ×¿ô°Ê³°¤Î¥Ç¡¼¥¿¤âÆÉ¤à
+  //å††ç›¤æ•°ä»¥å¤–ã®ãƒ‡ãƒ¼ã‚¿ã‚‚èª­ã‚€
 
 }
 

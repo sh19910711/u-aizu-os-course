@@ -10,11 +10,11 @@ void Initialize();
 void Solve(int *,int *,int *,int);
 void SaveData(const char*);
 
-int *naA; //��A
-int *naB; //��B
-int *naC; //��C
-unsigned int nMoves = 0;  //����ư���
-int nDisks = 20; //���׿�
+int *naA; //棒A
+int *naB; //棒B
+int *naC; //棒C
+unsigned int nMoves = 0;  //総移動回数
+int nDisks = 20; //円盤数
 
 int nAlarmSec = 10;
 int nSaveRequested = 0;
@@ -29,19 +29,19 @@ int main(int argc,char *argv[]){
   if (argc >= 2) nDisks = atoi(argv[1]);
 
 
-  //�����ΰ����
+  //メモリ領域確保
 
-  //������ƽ����
+  //塔の内容初期化
   Initialize();
 
-  //���顼��ֳ֤򥳥ޥ�ɥ饤�󤫤������� ���顼�ॷ���ʥ�ֳ֤ȥϥ�ɥ�ؿ�������
+  //アラーム間隔をコマンドラインから受け取り アラームシグナル間隔とハンドラ関数を設定
 
-  //��
+  //解く
   Solve(naA, naB, naC, nDisks);	
 
   SaveData(TMPFILE_NAME);
 
-  //���곫��
+  //メモリ開放
   free(naA);
   free(naB);
   free(naC);
@@ -84,10 +84,10 @@ void Solve(int *_naA, int *_naB, int *_naC, int n) {
 
 void SaveData(const char* sFileName) {
 
-  //�ե����륪���ץ�
+  //ファイルオープン
   int nFileDesc = open(sFileName, O_WRONLY|O_CREAT, S_IRUSR|S_IWUSR);
 
-  //��ǡ����񤭹���(flock�θ��̤��ǧ����Ȥ���, �����sleep��usleep�򶴤�Ǥ�������)
+  //塔データ書き込み(flockの効果を確認するときは, 途中にsleepやusleepを挟んでください)
 
 }
 

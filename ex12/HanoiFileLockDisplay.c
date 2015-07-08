@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h> // for write() function
 #include <fcntl.h>
 #include <sys/file.h>
 #include "HanoiFileLock.h"
@@ -31,12 +32,19 @@ void ReadData(const char* sFileName) {
   //ファイルオープン
   int nFileDesc = open(sFileName, O_RDONLY);
 
-  //円盤数を読み込む
+  // TODO: 円盤数を読み込む
+  read(nFileDesc, &nDisks, sizeof(int));
+  read(nFileDesc, &nMoves, sizeof(unsigned int));
 
-  //メモリ領域確保
+  // TODO: メモリ領域確保
+  naA = (int*)malloc(sizeof(int) * nDisks);
+  naB = (int*)malloc(sizeof(int) * nDisks);
+  naC = (int*)malloc(sizeof(int) * nDisks);
 
-  //円盤数以外のデータも読む
-
+  // TODO: 円盤数以外のデータも読む
+  read(nFileDesc, naA, nDisks * sizeof(int));
+  read(nFileDesc, naB, nDisks * sizeof(int));
+  read(nFileDesc, naC, nDisks * sizeof(int));
 }
 
 void Display(){	

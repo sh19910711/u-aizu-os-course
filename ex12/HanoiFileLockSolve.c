@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <unistd.h> // for write() function
 #include <fcntl.h>
 #include <sys/file.h>
 #include <sys/stat.h>
@@ -19,22 +20,37 @@ int nDisks = 20; //円盤数
 int nAlarmSec = 10;
 int nSaveRequested = 0;
 
-int main(int argc,char *argv[]){
+void sig_handler(int sig) {
+  if (sig == SIGALRM) {
+    nSaveRequested = 1;
+    alarm(nAlarmSec);
+  }
+}
 
-  if (argc > 3) {
+int main(int argc,char *argv[]){
+  if (argc < 2 || argc > 3) {
     printf("Usage: %s [disks] [sec]\n", argv[0]);
     exit(1);
   }
 
   if (argc >= 2) nDisks = atoi(argv[1]);
 
-
-  //メモリ領域確保
+  // TODO: メモリ領域確保
+  naA = (int*)malloc(sizeof(int) * nDisks);
+  naB = (int*)malloc(sizeof(int) * nDisks);
+  naC = (int*)malloc(sizeof(int) * nDisks);
 
   //塔の内容初期化
   Initialize();
 
-  //アラーム間隔をコマンドラインから受け取り アラームシグナル間隔とハンドラ関数を設定
+  // TODO: アラーム間隔をコマンドラインから受け取り アラームシグナル間隔とハンドラ関数を設定
+  if (SIG_ERR == signal(SIGALRM, sig_handler)) {
+    printf("error: signal()");
+    exit(1);
+  }
+
+  if (argc >= 3) nAlarmSec = atoi(argv[2]);
+  alarm(nAlarmSec);
 
   //解く
   Solve(naA, naB, naC, nDisks);	
@@ -87,7 +103,17 @@ void SaveData(const char* sFileName) {
   //ファイルオープン
   int nFileDesc = open(sFileName, O_WRONLY|O_CREAT, S_IRUSR|S_IWUSR);
 
-  //塔データ書き込み(flockの効果を確認するときは, 途中にsleepやusleepを挟んでください)
+  // TODO: 塔データ書き込み(flockの効果を確認するときは, 途中にsleepやusleepを挟んでください)
+  flock(nFileDesc, LOCK_EX);
 
+  write(nFileDesc, &nDisks, sizeof(int));
+  write(nFileDesc, &nMoves, sizeof(unsigned int));
+  write(nFileDesc, naA, nDisks * sizeof(int));
+  write(nFileDesc, naB, nDisks * sizeof(int));
+  write(nFileDesc, naC, nDisks * sizeof(int));
+
+  usleep(100000); // sleep 0.1[sec]
+
+  flock(nFileDesc, LOCK_UN);
 }
 

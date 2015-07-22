@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(ex14)
 add_executable(hello hello.c)
+add_executable(lsl2 lsl2.c)
 
 # enable gtest
 find_package(GTest)
